@@ -21,3 +21,33 @@ float Graph::getValue(int i, int j) const{
     return graph[i][j];
 };
 
+void Graph::storeHouseInitialisation(){
+    //Define how many houses connect to store
+    int storeConnections = n/2;
+    if(storeConnections > 5){
+        storeConnections = 5;
+    }
+
+    srand(time(0));
+
+
+    for(int i = 0 ; i < storeConnections; i++){
+        
+        int min = 1;
+        int max = n-1;
+        int randEdge = min + rand() % (max - min + 1);
+
+        float randWeight = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+
+        //Ensure that the same edge is not changed
+
+        if(graph[0][randEdge] > 100){
+            changeEdge(randWeight, 0, randEdge, true);
+        }
+
+        //Reselect edge if invalid
+        else{
+            i = i -1;
+        }
+    }
+}

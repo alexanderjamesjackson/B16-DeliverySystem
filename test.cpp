@@ -25,9 +25,9 @@ int main(){
 
     Graph g(5);
 
-
-    g.changeEdge(1.5, 0, 1, false); 
-    g.changeEdge(2.5, 2, 3, true);  
+    g.storeHouseInitialisation();
+    // g.changeEdge(1.5, 0, 1, false); 
+    // g.changeEdge(2.5, 2, 3, true);  
 
 
     PrintGraph(g, 5);
