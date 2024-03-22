@@ -5,6 +5,7 @@ using namespace std;
 Graph::Graph(int N):n(N), graph(std::vector<std::vector<float> > (N, std::vector<float> (N, numeric_limits<float>::infinity() ))){
     for(int i = 0 ; i < n ; i++){
         graph[i][i] =0;
+        int j;
     }
 };
 
