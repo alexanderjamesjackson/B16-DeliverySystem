@@ -156,3 +156,35 @@ Graph Graph::randomWalk(){
     }
     return walkGraph;
 };
+
+Pipeline::Pipeline(int nNodes, int min, int max): nNodes(nNodes),minBaskets(min), maxBaskets(max){};
+
+void Pipeline::createOrders(){
+    for(int i = 1 ; i < nNodes ; i++){
+        int nBaskets = minBaskets + rand() % (maxBaskets - minBaskets + 1);
+        if (nBaskets != 0){
+            orders.push_back(vector<int> {i , nBaskets});
+        }
+    }
+    nOrders = orders.size();
+};
+
+vector<int> Pipeline::getOrder(int orderNum)const{
+    return orders[orderNum - 1];
+};
+
+vector<vector<int> > Pipeline::getAllOrders() const{
+    return orders;
+};
+
+void Pipeline::printOrders() const{
+    for(int i = 0 ; i < nOrders ; i++){
+        cout<< "House " << orders[i][0] << " ordered " << orders[i][1] << " baskets." << endl;
+    }
+};
+
+int Pipeline::getNumberOrders() const{return nOrders;};
+
+int Pipeline::getMaxBaskets() const{return maxBaskets;};
+
+int Pipeline::getMinBaskets() const{return minBaskets;};

@@ -1,17 +1,15 @@
 //File to test modular functionality 
 
 #include "maps.hpp"
-#include <iostream>
-#include <limits>
-#include <vector>
 
 
+using namespace std;
 
 
 
 int main(){
-
-    Graph g(5);
+    int numNodes = 5;
+    Graph g(numNodes);
     srand(time(0));
     g.storeHouseInitialisation();
     g.ringRoadInitialisation();
@@ -19,8 +17,9 @@ int main(){
     Graph walk = g.randomWalk();
     // g.changeEdge(1.5, 0, 1, false); 
     // g.changeEdge(2.5, 2, 3, true);  
-
-
+    Pipeline p(numNodes, 0, 2);
+    p.createOrders();
+    p.printOrders();
     walk.print();
 
     return 0;

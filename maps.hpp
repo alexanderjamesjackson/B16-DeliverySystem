@@ -6,10 +6,10 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
-
+using namespace std;
 class Graph{
     private:
-        std::vector < std::vector<float> > graph;
+        vector < vector<float> > graph;
         int n;
 
     public:
@@ -39,6 +39,34 @@ class Graph{
         void crossRoadInitialisation(float k);
 
         Graph randomWalk();
+};
+
+
+class Pipeline{
+    private:
+        vector<vector<int> > orders;
+        int nOrders;
+        int maxBaskets;
+        int minBaskets;
+        int nNodes;
+    
+    public:
+        //Constructor
+        Pipeline(int nNodes, int min, int max);
+
+        //Initialise Orders
+        void createOrders();
+
+        //read only functions
+        //Order numbers will go from 1 -> n orders, These are linked to the positions in orders container.
+        vector<int> getOrder(int orderNum) const;
+        vector<vector<int> > getAllOrders() const;
+        int getNumberOrders() const;
+        int getMaxBaskets() const;
+        int getMinBaskets() const;
+        void printOrders() const;
+
+
 };
 
 
