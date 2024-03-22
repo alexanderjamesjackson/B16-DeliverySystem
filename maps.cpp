@@ -40,8 +40,8 @@ void Graph::print()const {
 void Graph::storeHouseInitialisation(){
     //Define how many houses connect to store
     int storeConnections = n/2;
-    if(storeConnections > 5){
-        storeConnections = 5;
+    if(storeConnections > 3){
+        storeConnections = 3;
     }
 
     for(int i = 0 ; i < storeConnections; i++){
@@ -156,6 +156,58 @@ Graph Graph::randomWalk(){
     }
     return walkGraph;
 };
+
+vector<pair<vector<int> , float> > Graph::dijkstraWithPath(int source) const{
+    //Keep tracks of distances
+    vector<float> dist(n, numeric_limits<float>::infinity());
+    //Keep track of previously visited
+    vector<int> prev(n , -1);
+    //Keep track of whether node is visited
+    vector<bool> visited(n, false);
+
+    //Queue of nodes to visit prioritised by tentative distance from source smallest first
+    priority_queue< pair<float, int> , vector<pair<float, int> > , greater<> > pq;
+
+    dist[source] = 0.0;
+    pq.push({0.0, source});
+
+    while(pq.empty() == false){
+        int u = pq.top().second;
+        pq.pop();
+
+        if(visited[u] == true){
+            continue;
+        }
+        visited[u] = true;
+
+        for(int v = 0 ; v < n ; v++){
+            float weight = getValue(u,v);
+            if(visited[v] == false && weight < 100 && dist[u] + weight < dist[v]){
+                dist[v] = dist[u] + weight;
+                prev[v] = u;
+                pq.push({dist[v] , v});
+            }
+        }
+    };
+
+    //Reconstruct Paths
+
+    vector<pair<vector<int>, float> > paths(n);
+    for(int i = 0 ; i < n ; i++){
+        vector<int> path;
+        //start at target node, check that there is a predecessor and then work backwards each iteration
+        for(int at = i ; at != -1; at = prev[at]){
+            path.insert(path.begin(),at); //Insert at start
+        }
+        paths[i] = {path, dist[i]};
+
+    }
+    return paths;
+};
+
+
+
+
 
 Pipeline::Pipeline(int nNodes, int min, int max): nNodes(nNodes),minBaskets(min), maxBaskets(max){};
 

@@ -1,5 +1,5 @@
 
-
+#include <queue>
 #include <algorithm>
 #include <vector>
 #include <iostream>
@@ -39,6 +39,9 @@ class Graph{
         void crossRoadInitialisation(float k);
 
         Graph randomWalk();
+
+        vector<pair<vector<int>, float > > dijkstraWithPath(int source) const;
+
 };
 
 
