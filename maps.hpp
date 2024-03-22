@@ -1,6 +1,6 @@
 
 
-
+#include <algorithm>
 #include <vector>
 #include <iostream>
 #include <limits>
@@ -15,6 +15,12 @@ class Graph{
     public:
         //Construct a adjacency matrix of size N initialised to infinite weights
         Graph(int N);
+        //Read Size
+        int getSize() const;
+
+        //Print Graph
+
+        void print() const;
 
         //Modify an edge value from i -> j with value w, option to change j-> at same time by setting twoWay to true
         void changeEdge(float w, int i, int j, bool twoWay);
@@ -31,6 +37,8 @@ class Graph{
         //Initialise k * n random cross connections between houses
 
         void crossRoadInitialisation(float k);
+
+        Graph randomWalk();
 };
 
 
