@@ -27,6 +27,10 @@ class Graph{
 
         //Initialise "Ring Road" around houses
         void ringRoadInitialisation();
+
+        //Initialise k * n random cross connections between houses
+
+        void crossRoadInitialisation(float k);
 };
 
 

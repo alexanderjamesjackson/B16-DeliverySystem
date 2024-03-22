@@ -27,6 +27,7 @@ int main(){
     srand(time(0));
     g.storeHouseInitialisation();
     g.ringRoadInitialisation();
+    g.crossRoadInitialisation(0.4);
     // g.changeEdge(1.5, 0, 1, false); 
     // g.changeEdge(2.5, 2, 3, true);  
 

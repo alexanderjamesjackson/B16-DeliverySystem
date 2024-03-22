@@ -28,9 +28,6 @@ void Graph::storeHouseInitialisation(){
         storeConnections = 5;
     }
 
-  
-
-
     for(int i = 0 ; i < storeConnections; i++){
         
         int min = 1;
@@ -66,4 +63,25 @@ void Graph::ringRoadInitialisation(){
     float randWeight = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
     changeEdge(randWeight, 1 , n - 1, true);
+};
+
+void Graph::crossRoadInitialisation(float k){
+    int min = 1;
+    int max = n - 1;
+    int nCross = k * n;
+
+    for(int i = 0; i< nCross ; i++){
+        float randWeight = static_cast<float>(rand()) /static_cast<float>(RAND_MAX);
+
+        int randEdge1 = min + rand() % (max - min + 1);
+        int randEdge2 = min + rand() % (max - min + 1);
+
+        //Ensure that we are adding between two different houses that do not have a road between them
+        if(randEdge1 != randEdge2 && getValue(randEdge1, randEdge2) > 100){
+            changeEdge(randWeight, randEdge1, randEdge2, true);
+        }
+        else{
+            i = i - 1;
+        }
+    }
 };
