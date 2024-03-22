@@ -28,7 +28,7 @@ void Graph::storeHouseInitialisation(){
         storeConnections = 5;
     }
 
-    srand(time(0));
+  
 
 
     for(int i = 0 ; i < storeConnections; i++){
@@ -37,7 +37,7 @@ void Graph::storeHouseInitialisation(){
         int max = n-1;
         int randEdge = min + rand() % (max - min + 1);
 
-        float randWeight = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        float randWeight = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
         //Ensure that the same edge is not changed
 
@@ -51,3 +51,19 @@ void Graph::storeHouseInitialisation(){
         }
     }
 }
+
+
+void Graph::ringRoadInitialisation(){
+    
+    
+    //loop n-2 times to connect node 1 -> 2, 2 -> 3, .......
+    for( int i = 1 ; i < n - 1 ; i++){
+        float randWeight = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        changeEdge(randWeight, i, i + 1, true);
+    }
+
+    //close loop i.e node n-1 -> 1 
+    float randWeight = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    changeEdge(randWeight, 1 , n - 1, true);
+};

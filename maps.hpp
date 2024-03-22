@@ -24,6 +24,9 @@ class Graph{
 
         //Initialise n/2 randomly weighted edge connections between store and random houses
         void storeHouseInitialisation();
+
+        //Initialise "Ring Road" around houses
+        void ringRoadInitialisation();
 };
 
 
