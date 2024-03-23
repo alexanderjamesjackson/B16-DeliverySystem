@@ -73,6 +73,25 @@ class Pipeline{
 };
 
 
+class Robot{
+    private:
+        int packages;
+        int capacity;
+        int currentLocation;
+        //First index is source node, second index is target node, .first is vector of nodes to visit on way, .second is total distance
+        const vector<vector< pair<vector<int>, float> > > paths;
+    public:
+        Robot(int Capacity, const vector<vector< pair<vector<int>, float> > > & Paths);
+
+        void pickPackages(int numPackages);
+        void dropPackages(int numPackages);
+        void move(int location);
+
+
+
+};
+
+
 
 
 

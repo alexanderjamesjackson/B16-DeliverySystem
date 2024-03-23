@@ -208,7 +208,6 @@ vector<pair<vector<int> , float> > Graph::dijkstraWithPath(int source) const{
 
 
 
-
 Pipeline::Pipeline(int nNodes, int min, int max): nNodes(nNodes),minBaskets(min), maxBaskets(max){};
 
 void Pipeline::createOrders(){
@@ -240,3 +239,32 @@ int Pipeline::getNumberOrders() const{return nOrders;};
 int Pipeline::getMaxBaskets() const{return maxBaskets;};
 
 int Pipeline::getMinBaskets() const{return minBaskets;};
+
+
+
+Robot::Robot(int Capacity, const vector<vector< pair<vector<int>, float> > > & Paths):capacity(Capacity), paths(Paths){};
+
+void Robot::pickPackages(int numPackages){
+    if(packages + numPackages <= capacity){
+        packages += numPackages;
+    }
+    else{
+        cout << "Robot Over Capacity Error" << endl;
+    }
+};
+
+
+void Robot::dropPackages(int numPackages){
+    if(packages - numPackages >= 0){
+        packages -= numPackages;
+    } 
+
+    else{
+        cout << "Robot Under Capacity Error" << endl;
+    }
+};
+
+void Robot::move(int location){
+    vector <int> directions = paths[currentLocation][location].first;
+    float distance = paths[currentLocation][location].second;
+};
