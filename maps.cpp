@@ -80,12 +80,11 @@ void Graph::ringRoadInitialisation(){
 
     changeEdge(randWeight, 1 , n - 1, true);
 };
-
+//
 void Graph::crossRoadInitialisation(float k){
     int min = 1;
     int max = n - 1;
     int nCross = k * n;
-
     for(int i = 0; i< nCross ; i++){
         float randWeight = static_cast<float>(rand()) /static_cast<float>(RAND_MAX);
 
@@ -103,7 +102,7 @@ void Graph::crossRoadInitialisation(float k){
 };
 
 
-
+//takes a random walk through the previous graph in order to create a truly random graph network where all houses are accessible from the store but not directly
 Graph Graph::randomWalk(){
     bool visitedAll = false;
     int currentNode = 0;
@@ -156,7 +155,7 @@ Graph Graph::randomWalk(){
     }
     return walkGraph;
 };
-
+//Find shortest paths to source node
 vector<pair<vector<int> , float> > Graph::dijkstraWithPath(int source) const{
     //Keep tracks of distances
     vector<float> dist(n, numeric_limits<float>::infinity());
@@ -210,7 +209,7 @@ vector<pair<vector<int> , float> > Graph::dijkstraWithPath(int source) const{
 
 
 Pipeline::Pipeline(int nNodes, int min, int max): nNodes(nNodes),minBaskets(min), maxBaskets(max){};
-
+//Create random orders
 void Pipeline::createOrders(){
     for(int i = 1 ; i < nNodes ; i++){
         int nBaskets = minBaskets + rand() % (maxBaskets - minBaskets + 1);
@@ -221,8 +220,16 @@ void Pipeline::createOrders(){
     nOrders = orders.size();
 };
 
-vector<int> Pipeline::getOrder(int orderNum)const{
-    return orders[orderNum - 1];
+//retrieve how many baskets a certain house ordered
+int Pipeline::getOrder(int houseNum)const{
+    for(int i = 0 ; i < orders.size() ; i++){
+        if(orders[i][0] == houseNum){
+            return orders[i][1];
+        }
+    }
+    //magic no to signify no order found
+    return -1;
+
 };
 
 vector<vector<int> > Pipeline::getAllOrders() const{
@@ -240,7 +247,7 @@ int Pipeline::getNumberOrders() const{return nOrders;};
 int Pipeline::getMaxBaskets() const{return maxBaskets;};
 
 int Pipeline::getMinBaskets() const{return minBaskets;};
-
+//Remove an order to house from pipeline
 void Pipeline::removeOrder(int house){
 
     for(int i = 0 ; i < orders.size() ; i++){
@@ -250,6 +257,7 @@ void Pipeline::removeOrder(int house){
         }
     }
 };
+//Reduce an order to house from pipeline by 1
 
 void Pipeline::reduceOrder(int house){
     for(int i = 0 ; i < orders.size() ; i++){
@@ -261,23 +269,107 @@ void Pipeline::reduceOrder(int house){
 }
 
 
-DeliveryPlanner::DeliveryPlanner(Graph & g, Pipeline & p): graph(g),pipeline(p), shortestPaths(g.dijkstraWithPath(0)){};
+DeliveryPlanner::DeliveryPlanner(Graph & g, Pipeline & p, vector<pair<vector<int>, float> > & shortestPaths): graph(g),pipeline(p), shortestPaths(shortestPaths){};
 
-vector<vector<int> > DeliveryPlanner::generatePlan(){
+
+/* Function to generate a delivery plan. Algorithm works by:
+-identifying the house "targetHouse"for which the shortest path to it contains the most houses that need delivering to
+-Completing delivery to targetHouse by removing its order from teh pipeline and adjusting the orders onboard accordingly
+-Work backwards along the path to targetHouse completing orders until empty or reached store
+-Repeat*/
+vector < pair<vector<int> , vector<int > > > DeliveryPlanner::generatePlan(){
 
     vector<vector<int> > orders = pipeline.getAllOrders();
 
-    vector<pair<vector<int>, float > > shortestPaths = graph.dijkstraWithPath(0);
-
+    vector < pair<vector<int> , vector<int > > > allData;
+    //Loop until no more orders
     while(pipeline.getAllOrders().empty() == false){
+
+
+        int basketsOnboard = 3;
+
+        //Find furthest house to visit
+
         int targetHouse = findTargetHouse();
 
         vector<int> targetPath = shortestPaths[targetHouse].first;
 
-        int targetPathSize = targetPath.size();
+        int basketsDelivered = pipeline.getOrder(targetHouse);
+        //log info about delivery
+        pair< vector<int> , vector<int> > data;
+        data.first.push_back(basketsDelivered);
+        data.first.push_back(targetHouse);
+        data.second = targetPath;
+        allData.push_back(data);
+        //adjust current orders on robot
+        basketsOnboard = basketsOnboard - basketsDelivered;
+
+        //remove order from pipeline as it is completed
+        pipeline.removeOrder(targetHouse);
+
+
+        //Backtrack along path completing deliveries until empty 
+
+        vector<int> newPath;
+
+        newPath.push_back(targetHouse);
+
+        for(int i = targetPath.size() - 2  ; i > 0 ; i--){
+
+            //construct new path to be logged for next delivery
+            newPath.push_back(targetPath[i]);
+            int basketsOrdered = pipeline.getOrder(targetPath[i]);
+
+            //Check for a valid order(magic number of -1 represents no order found)
+
+            if(basketsOrdered != -1){
+                //If equal then log delivery and empty the robot and start again from store
+                if(basketsOrdered == basketsOnboard){
+                    data.first[0] = basketsOrdered;
+                    data.first[1] = targetPath[i];
+                    data.second = newPath;
+                    allData.push_back(data);
+                    pipeline.removeOrder(targetPath[i]);
+                    break;
+                }
+                //If there are still baskets on robot then repeat until empty logging each delivery
+                else if(basketsOrdered < basketsOnboard){
+                    data.first[0] = basketsOrdered;
+                    data.first[1] = targetPath[i];
+                    data.second = newPath;
+                    allData.push_back(data);
+                    pipeline.removeOrder(targetPath[i]);
+                    newPath = {targetPath[i]};
+                    basketsOnboard = basketsOnboard - basketsOrdered;
+                }
+                //If the order exceeds what we have then reduce the order by giving what we have left and return to store
+                else if(basketsOrdered > basketsOnboard){
+                    data.first[0] = basketsOnboard;
+                    data.first[1] = targetPath[i];
+                    data.second = newPath;
+                    allData.push_back(data);
+                    pipeline.reduceOrder(targetPath[i]);
+                    break;
+                }
+
+                
+                
+            }
+            //Check for not carrying anything
+            if(basketsOnboard == 0){
+                break;
+            }
+            if(basketsOnboard < 0){
+                cout << "Error cannot have negative baskets" << endl;
+
+            }
+        }
+
+        
+
     } 
 
-    
+    return allData;
     
     
 };
@@ -289,14 +381,14 @@ int DeliveryPlanner::findTargetHouse(){
 
     int maxOrdersOnPath = 0;
     int targetHouse = 0;
-
+    //Construct set of houses with orders for easy lookup
     set<int> housesThatOrdered;
 
     for(int i = 0 ; i< orders.size() ; i++){
         housesThatOrdered.insert(orders[i][0]);
     }
 
-
+    //Find best house to target by most matches with orders
     for(int i = 0 ; i < orders.size(); i++){
         int currentHouse = orders[i][0];
 

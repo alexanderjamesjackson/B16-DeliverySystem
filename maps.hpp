@@ -16,6 +16,7 @@ class Graph{
         //Construct a adjacency matrix of size N initialised to infinite weights
         Graph(int N);
         //Read Size
+
         int getSize() const;
 
         //Print Graph
@@ -34,7 +35,7 @@ class Graph{
         //Initialise "Ring Road" around houses
         void ringRoadInitialisation();
 
-        //Initialise k * n random cross connections between houses
+        //Initialise k * n random cross connections between houses( must check that cross connections are possible i.e nHouses > 3 and that we aren't asking for more cross connections than possible)
 
         void crossRoadInitialisation(float k);
 
@@ -60,8 +61,8 @@ class Pipeline{
         void createOrders();
 
         //read only functions
-        //Order numbers will go from 1 -> n orders, These are linked to the positions in orders container.
-        vector<int> getOrder(int orderNum) const;
+        //Finds how many baskets a house ordered
+        int getOrder(int houseNum) const;
         vector<vector<int> > getAllOrders() const;
         int getNumberOrders() const;
         int getMaxBaskets() const;
@@ -77,13 +78,14 @@ class DeliveryPlanner{
     private:
         Graph & graph;
         Pipeline & pipeline;
+
         vector<pair<vector<int>, float> > shortestPaths;
 
     public:
-        DeliveryPlanner(Graph & g, Pipeline & pipeline);
+        DeliveryPlanner(Graph & g, Pipeline & pipeline, vector<pair<vector<int>, float> > & shortestPaths);
         //Returns a vector of route/currentcapacity pairs
 
-        vector< vector<int> > generatePlan();
+        vector < pair<vector<int> , vector<int > > > generatePlan();
 
         int findTargetHouse();
 
