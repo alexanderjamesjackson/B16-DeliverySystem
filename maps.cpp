@@ -202,6 +202,7 @@ vector<pair<vector<int> , float> > Graph::dijkstraWithPath(int source) const{
         paths[i] = {path, dist[i]};
 
     }
+
     return paths;
 };
 
@@ -240,31 +241,81 @@ int Pipeline::getMaxBaskets() const{return maxBaskets;};
 
 int Pipeline::getMinBaskets() const{return minBaskets;};
 
+void Pipeline::removeOrder(int house){
 
-
-Robot::Robot(int Capacity, const vector<vector< pair<vector<int>, float> > > & Paths):capacity(Capacity), paths(Paths){};
-
-void Robot::pickPackages(int numPackages){
-    if(packages + numPackages <= capacity){
-        packages += numPackages;
-    }
-    else{
-        cout << "Robot Over Capacity Error" << endl;
+    for(int i = 0 ; i < orders.size() ; i++){
+        if(orders[i][0] == house){
+            orders.erase(orders.begin() + i);
+            break;
+        }
     }
 };
 
+void Pipeline::reduceOrder(int house){
+    for(int i = 0 ; i < orders.size() ; i++){
+        if(orders[i][0] == house){
+            orders[i][1] =orders[i][1] - 1;
+            break;
+        }
+    }
+}
 
-void Robot::dropPackages(int numPackages){
-    if(packages - numPackages >= 0){
-        packages -= numPackages;
+
+DeliveryPlanner::DeliveryPlanner(Graph & g, Pipeline & p): graph(g),pipeline(p), shortestPaths(g.dijkstraWithPath(0)){};
+
+vector<vector<int> > DeliveryPlanner::generatePlan(){
+
+    vector<vector<int> > orders = pipeline.getAllOrders();
+
+    vector<pair<vector<int>, float > > shortestPaths = graph.dijkstraWithPath(0);
+
+    while(pipeline.getAllOrders().empty() == false){
+        int targetHouse = findTargetHouse();
+
+        vector<int> targetPath = shortestPaths[targetHouse].first;
+
+        int targetPathSize = targetPath.size();
     } 
 
-    else{
-        cout << "Robot Under Capacity Error" << endl;
-    }
+    
+    
+    
 };
 
-void Robot::move(int location){
-    vector <int> directions = paths[currentLocation][location].first;
-    float distance = paths[currentLocation][location].second;
+int DeliveryPlanner::findTargetHouse(){
+    vector<vector<int> > orders = pipeline.getAllOrders();
+
+    //find longest no of houses path that is in order list
+
+    int maxOrdersOnPath = 0;
+    int targetHouse = 0;
+
+    set<int> housesThatOrdered;
+
+    for(int i = 0 ; i< orders.size() ; i++){
+        housesThatOrdered.insert(orders[i][0]);
+    }
+
+
+    for(int i = 0 ; i < orders.size(); i++){
+        int currentHouse = orders[i][0];
+
+        vector<int> pathToCurrent = shortestPaths[currentHouse].first;
+
+        int houseCommon = 0;
+
+        for(int house : pathToCurrent){
+            if(housesThatOrdered.find(house) != housesThatOrdered.end()){
+                houseCommon++;
+            }
+        }
+        
+        if(houseCommon > maxOrdersOnPath){
+            maxOrdersOnPath = houseCommon;
+            targetHouse = currentHouse;
+        }
+
+        
+    }
+    return targetHouse;
 };

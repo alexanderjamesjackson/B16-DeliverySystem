@@ -6,12 +6,12 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
+#include <set>
 using namespace std;
 class Graph{
     private:
         vector < vector<float> > graph;
         int n;
-
     public:
         //Construct a adjacency matrix of size N initialised to infinite weights
         Graph(int N);
@@ -41,7 +41,6 @@ class Graph{
         Graph randomWalk();
 
         vector<pair<vector<int>, float > > dijkstraWithPath(int source) const;
-
 };
 
 
@@ -69,27 +68,27 @@ class Pipeline{
         int getMinBaskets() const;
         void printOrders() const;
 
+        void removeOrder(int house);
+        void reduceOrder(int house);
 
 };
 
-
-class Robot{
+class DeliveryPlanner{
     private:
-        int packages;
-        int capacity;
-        int currentLocation;
-        //First index is source node, second index is target node, .first is vector of nodes to visit on way, .second is total distance
-        const vector<vector< pair<vector<int>, float> > > paths;
+        Graph & graph;
+        Pipeline & pipeline;
+        vector<pair<vector<int>, float> > shortestPaths;
+
     public:
-        Robot(int Capacity, const vector<vector< pair<vector<int>, float> > > & Paths);
+        DeliveryPlanner(Graph & g, Pipeline & pipeline);
+        //Returns a vector of route/currentcapacity pairs
 
-        void pickPackages(int numPackages);
-        void dropPackages(int numPackages);
-        void move(int location);
+        vector< vector<int> > generatePlan();
 
-
+        int findTargetHouse();
 
 };
+
 
 
 
