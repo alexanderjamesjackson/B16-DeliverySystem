@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <set>
+#include <fstream>
+
 using namespace std;
 class Graph{
     private:
@@ -15,6 +17,10 @@ class Graph{
     public:
         //Construct a adjacency matrix of size N initialised to infinite weights
         Graph(int N);
+
+        //return graph matrix
+
+        vector<vector<float> > getAdjMatrix() const;
         //Read Size
 
         int getSize() const;

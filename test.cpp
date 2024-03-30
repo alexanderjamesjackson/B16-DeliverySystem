@@ -27,6 +27,23 @@ void printAllData(const vector < pair<vector<int> , vector<int > > > & allData){
         cout << endl;
     }
 };
+//Generate dot file to visualise graph
+void generateDotFileWithWeights(const std::vector<std::vector<float>>& matrix, const std::string& filename) {
+    std::ofstream dotFile(filename);
+
+    dotFile << "graph G {" << std::endl;
+    for (size_t i = 0; i < matrix.size(); ++i) {
+        for (size_t j = i + 1; j < matrix[i].size(); ++j) {
+            if (matrix[i][j] != 0 && matrix[i][j] != std::numeric_limits<float>::infinity()) { // Assuming non-zero and non-infinity values represent edges
+                dotFile << "    " << i << " -- " << j << " [label=\"" << matrix[i][j] << "\"];" << std::endl;
+            }
+        }
+    }
+    dotFile << "}" << std::endl;
+
+    dotFile.close();
+    //Must run dot -Tpng filename.dot -o filename.png in terminal to form images                
+}
 
 int main(){
 
@@ -40,11 +57,24 @@ int main(){
     g.storeHouseInitialisation();
         
     g.ringRoadInitialisation();
-    
+    // vector<vector<float> > ringMatrix = g.getAdjMatrix();
+
+    // generateDotFileWithWeights(ringMatrix, "ring_graph.dot");
+
     g.crossRoadInitialisation(0.5);
+
+    // vector<vector<float> > graphMatrix = g.getAdjMatrix();
+
+    // generateDotFileWithWeights(graphMatrix, "graph_graph.dot");
 
     //Takes a random walk through previous graph to create truly random network
     Graph walk = g.randomWalk();
+    
+    vector<vector<float> > walkMatrix = walk.getAdjMatrix();
+
+    generateDotFileWithWeights(walkMatrix, "walk_graph.dot");
+
+
     cout << "    " << endl;
     walk.print();
     cout << "    " << endl;
@@ -61,6 +91,7 @@ int main(){
     p.createOrders();
     p.printOrders();
 
+    cout << "    " << endl;
     //Create a delivery planner and create and print a plan
     DeliveryPlanner dp(walk, p, shortestPaths);
 

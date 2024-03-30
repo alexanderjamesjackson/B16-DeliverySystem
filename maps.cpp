@@ -8,6 +8,9 @@ Graph::Graph(int N):n(N), graph(std::vector<std::vector<float> > (N, std::vector
     }
 };
 
+vector<vector<float> >Graph::getAdjMatrix() const{
+    return graph;
+};
 
 void Graph::changeEdge(float w, int i, int j, bool twoWay){
     graph[i][j] = w;
