@@ -7,5 +7,5 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
-add_executable(DeliverySystem test.cpp maps.cpp)
+add_executable(DeliverySystem main.cpp maps.cpp)
 
