@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Graph::Graph(int N):n(N), graph(std::vector<std::vector<float> > (N, std::vector<float> (N, numeric_limits<float>::infinity() ))){
+Graph::Graph(int N):n(N), graph(vector<vector<float> > (N, vector<float> (N, numeric_limits<float>::infinity() ))){
     for(int i = 0 ; i < n ; i++){
         graph[i][i] =0;
     }
@@ -30,13 +30,13 @@ void Graph::print()const {
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             float value = getValue(i, j);
-            if (value == std::numeric_limits<float>::infinity()) {
-                std::cout << "inf ";
+            if (value == numeric_limits<float>::infinity()) {
+                cout << "inf ";
             } else {
-                std::cout << value << " ";
+                cout << value << " ";
             }
         }
-        std::cout << "\n";
+        cout << "\n";
     }
 }
 
